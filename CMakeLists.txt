@@ -5,12 +5,12 @@ project(FileSysAsList)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Р РµС€РµРЅРёРµ РїСЂРѕР±Р»РµРјС‹ СЃ РєРѕРґРёСЂРѕРІРєРѕР№ (РёСЃРєР»СЋС‡РёС‚РµР»СЊРЅРѕ РґР»СЏ MSVC Рё MSBuild)
+# Решение проблемы с кодировкой (исключительно для MSVC и MSBuild)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/windows-1251>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/windows-1251>")
 
 #####################
-# РЎРѕР·РґР°РЅРёРµ Р±РёР±Р»РёРѕС‚РµРєРё
+# Создание библиотеки
 #####################
 
 add_library(MenuWork STATIC
@@ -23,11 +23,12 @@ target_include_directories(MenuWork
 )
 
 ##########################
-# РЎРѕР·РґР°РЅРёРµ СЃР°РјРѕР№ РїСЂРѕРіСЂР°РјРјС‹
+# Создание самой программы
 ##########################
 
 add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/src/main.cpp
+    ${PROJECT_SOURCE_DIR}/src/fileSys.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
