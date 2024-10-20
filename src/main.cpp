@@ -18,11 +18,17 @@ int main()
     File2->name = "2.txt";
     Folder1->name = "folder1";
     File3->name = "3.txt";
+    File4->name = "4.txt";
 
     MainSys.touch(File1);
     MainSys.touch(File2);
     MainSys.mkdir(Folder1);
+
+    MainSys.ls();
+
     MainSys.writeInFolder = true;
+    MainSys.CurDir = Folder1;
+
     MainSys.touch(File3);
     MainSys.touch(File4);
 

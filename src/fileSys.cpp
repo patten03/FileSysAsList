@@ -4,6 +4,7 @@ FileSys::FileSys()
 {
     this->Beg = nullptr;
     this->Cur = nullptr;
+    this->CurDir = nullptr;
 
     writeInFolder = false;
 }
@@ -67,6 +68,7 @@ void FileSys::addElem(DirElem* NewElem)
     {
         this->Beg = NewElem;
         this->Cur = this->Beg;
+        this->CurDir = this->Beg;
     }
     // Случай, когда в выбранной папке ничего нет
     if(writeInFolder && Cur->type == 'd')
@@ -170,7 +172,18 @@ void FileSys::rmdir(Folder*& ExFolder)
 
 void FileSys::ls()
 {
-    DirElem* curElem = this->Beg;
+    // Находимся ли мы на диске или в папке
+    DirElem* curElem;
+    if(this->Beg != this->CurDir)
+        curElem = static_cast<Folder*>(this->CurDir)->innerElemPtr;
+    else
+        curElem = this->Beg;
+    
+    // Вывод сообщения в случае, если директория пуста
+    if(curElem == nullptr)
+        std::cout << "Текущая директория пуста" << std::endl;
+
+    // Прохождение по текущей директории и вывод информации
     while(curElem != nullptr)
     {
         std::cout << curElem->type << ' ' <<  curElem->name << std::endl;

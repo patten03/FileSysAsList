@@ -37,8 +37,9 @@ class File: public DirElem
 class FileSys
 {
     public:
-        DirElem *Beg;
-        DirElem *Cur;
+        DirElem *Beg;    // Общее начало списка
+        DirElem *Cur;    // Текущий элемент директории, с которого начинается запись
+        DirElem *CurDir; // Текущая папка, для вывода через ls()
 
         // Отвечает за запись в последующие папки в директории
         bool writeInFolder;
