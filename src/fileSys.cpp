@@ -11,32 +11,16 @@ FileSys::FileSys()
 
 void FileSys::touch(File* NewFile)
 {
-    // Случай, когда через cd() была сменена папка и туда требуется добавить элемент
-    if(writeInFolder && Cur->type == 'd')
-    {
-        // Перевод родительского класса в класс потомка для получения доступа к полю innerElemPtr
-        DirElem* temp = static_cast<Folder*>(this->Cur)->innerElemPtr;
-
-        // Случай, если папка пуста
-        if (temp == nullptr); // Оставляем указатель Cur на своем месте
-        // Если в папке уже находятся элементы
-        else
-        {
-            // Нахождение конца списка
-            while(temp->nextPtr != nullptr)
-                temp = temp->nextPtr;
-            Cur = temp;
-        }
-        
-        addElem(NewFile);
-    }
-    // Случай, когда требуется продолжить запись в текущей папке
-    else
-        addElem(NewFile);
+    addElem(NewFile);
 }
 
 void FileSys::mkdir(Folder* NewFolder)
 {
+    addElem(NewFolder);
+}
+
+void FileSys::addElem(DirElem* NewElem)
+{
     // Случай, когда через cd() была сменена папка и туда требуется добавить элемент
     if(writeInFolder && Cur->type == 'd')
     {
@@ -53,16 +37,8 @@ void FileSys::mkdir(Folder* NewFolder)
                 temp = temp->nextPtr;
             Cur = temp;
         }
-        
-        addElem(NewFolder);
     }
-    // Случай, когда требуется продолжить запись в текущей папке
-    else
-        addElem(NewFolder);
-}
 
-void FileSys::addElem(DirElem* NewElem)
-{
     // Случай, когда в файловой системе ничего нет
     if(this->Beg == nullptr)
     {

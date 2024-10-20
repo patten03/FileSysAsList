@@ -52,6 +52,7 @@ class FileSys
         void rmdir(Folder*& ExFolder);      // удалить папку
 
         void addElem(DirElem* NewElem);     // подфункция для touch() и mkdir() 
+        void delElem(DirElem* ExElem);      // подфункция для rm() и rmdir
 
         void ls();           // вернуть содержимое текущей директории
         // DirElem& cd();    // изменить текущую директорию 
