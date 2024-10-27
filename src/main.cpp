@@ -7,6 +7,7 @@ int main()
 
     FileSys MainSys;
     Folder *Folder1 = new Folder;
+    Folder *Folder2 = new Folder;
 
     File *File1, *File2, *File3, *File4;
     File1 = new File;
@@ -17,6 +18,7 @@ int main()
     File1->name = "1.txt";
     File2->name = "2.txt";
     Folder1->name = "folder1";
+    Folder2->name = "folder2";
     File3->name = "3.txt";
     File4->name = "4.txt";
 
@@ -30,14 +32,19 @@ int main()
     MainSys.CurDir = Folder1;
 
     MainSys.touch(File3);
-    MainSys.touch(File4);
+    MainSys.mkdir(Folder2);
+
+    MainSys.writeInFolder = true;
+    MainSys.CurDir = Folder2;
+
+    MainSys.touch(File4); // какого-то черта указатель nextPtr указывает обратно в папку
 
     MainSys.ls();
 
     MainSys.rmdir(Folder1);
-    MainSys.rm(File2);
-    MainSys.rm(File3);
-    MainSys.rm(File1);
+    // MainSys.rm(File2);
+    // MainSys.rm(File3);
+    // MainSys.rm(File1);
     
     return 0;
 }

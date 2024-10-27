@@ -16,6 +16,7 @@ class DirElem
         DirElem *nextPtr;
 
         DirElem();
+        virtual ~DirElem();
 };
 
 class Folder: public DirElem
@@ -24,6 +25,7 @@ class Folder: public DirElem
         DirElem *innerElemPtr;
 
         Folder();
+        ~Folder();
 };
 
 class File: public DirElem
@@ -32,6 +34,7 @@ class File: public DirElem
         unsigned int size;
 
         File();
+        // ~File();
 };
 
 class FileSys
@@ -52,7 +55,7 @@ class FileSys
         void rmdir(Folder*& ExFolder);      // удалить папку
 
         void addElem(DirElem* NewElem);     // подфункция для touch() и mkdir() 
-        void delElem(DirElem* ExElem);      // подфункция для rm() и rmdir
+        void delElem(DirElem*& ExElem);      // подфункция для rm() и rmdir
 
         void ls();           // вернуть содержимое текущей директории
         // DirElem& cd();    // изменить текущую директорию 

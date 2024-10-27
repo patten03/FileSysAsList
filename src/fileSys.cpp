@@ -45,6 +45,7 @@ void FileSys::addElem(DirElem* NewElem)
         this->Beg = NewElem;
         this->Cur = this->Beg;
         this->CurDir = this->Beg;
+        return;
     }
     // Случай, когда в выбранной папке ничего нет
     if(writeInFolder && Cur->type == 'd')
@@ -53,6 +54,7 @@ void FileSys::addElem(DirElem* NewElem)
         NewElem->prevPtr = this->Cur;
 
         this->Cur = NewElem;
+        return;
     }
     // Случай, когда в файловой системе уже что-то есть
     else
@@ -61,6 +63,7 @@ void FileSys::addElem(DirElem* NewElem)
 
         NewElem->prevPtr = this->Cur;
         this->Cur = NewElem;
+        return;
     }
 }
 
@@ -186,4 +189,25 @@ File::File()
 {
     this->type = 'f'; // f - file, элемент является файлом
     this->size = 0;
+}
+
+DirElem::~DirElem()
+{
+    // delete this;
+}
+
+Folder::~Folder()
+{
+    {
+        DirElem* curPtr = this->innerElemPtr;
+        
+        // цикл удаление всех элементов внутри папки
+        DirElem* buff;
+        while (curPtr != nullptr)
+        {
+            buff = curPtr->nextPtr;
+            delete curPtr;
+            curPtr = buff;
+        }
+    }
 }
