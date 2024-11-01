@@ -6,7 +6,9 @@ FileSys::FileSys()
     this->Cur = nullptr;
     this->CurDir = nullptr;
 
-    writeInFolder = false;
+    this->fullPath = "C:";
+
+    this->writeInFolder = false;
 }
 
 void FileSys::touch(File* NewFile)
@@ -44,7 +46,6 @@ void FileSys::addElem(DirElem* NewElem)
     {
         this->Beg = NewElem;
         this->Cur = this->Beg;
-        this->CurDir = this->Beg;
         return;
     }
     // Случай, когда в выбранной папке ничего нет
@@ -54,6 +55,7 @@ void FileSys::addElem(DirElem* NewElem)
         NewElem->prevPtr = this->Cur;
 
         this->Cur = NewElem;
+        writeInFolder = false;
         return;
     }
     // Случай, когда в файловой системе уже что-то есть
@@ -153,8 +155,9 @@ void FileSys::ls()
 {
     // Находимся ли мы на диске или в папке
     DirElem* curElem;
-    if(this->Beg != this->CurDir)
-        curElem = static_cast<Folder*>(this->CurDir)->innerElemPtr;
+    if(this->CurDir != nullptr)
+        curElem = CurDir->getChild();
+        // curElem = static_cast<Folder*>(this->CurDir)->innerElemPtr;
     else
         curElem = this->Beg;
     
@@ -168,6 +171,103 @@ void FileSys::ls()
         std::cout << curElem->type << ' ' <<  curElem->name << std::endl;
         curElem = curElem->nextPtr;
     }
+}
+
+void FileSys::cd(std::string input)
+{
+    // Выход из текущей папки
+    if (input == ".." && CurDir != nullptr)
+    {
+        fullPath = fullPath.substr(0, fullPath.rfind('\\'));
+
+        // Случай, когда мы вышли к диску
+        if (fullPath == "C:")
+        {
+            CurDir = nullptr;
+            Cur = Beg;
+
+            while (Cur->nextPtr != nullptr)
+                Cur = Cur->nextPtr;
+        }
+        else
+        {
+            std::string outerFolder = fullPath.substr(fullPath.rfind('\\') + 1, fullPath.size() - fullPath.rfind('\\') - 1);
+            
+            // Перемещение указателя текущей папки во внешнюю папку
+            while (CurDir->prevPtr->name != outerFolder)
+            {
+                CurDir = CurDir->prevPtr;
+            }
+            CurDir = CurDir->prevPtr;
+
+            Cur = CurDir;
+            // Перемещение указателя Cur в конец списка
+            while (Cur->nextPtr != nullptr)
+                Cur = Cur->nextPtr;
+        }
+    }
+
+    // Изменение текущей директории в введенную папку
+    if (input != "..")
+    {
+        DirElem* DirPtr;
+        // Случай, когда мы находимся на диске
+        if (CurDir == nullptr)
+            DirPtr = Beg;
+        // Случай, когда мы находимся на диске
+        else
+            DirPtr = CurDir->getChild();
+
+        // Поиск введенной папки в текущей директории
+        while (DirPtr != nullptr && (DirPtr->name != input && DirPtr->type != 'd'))
+        {
+            DirPtr = DirPtr->nextPtr;
+        }
+
+        // Случай, когда ничего не было найдено
+        if (DirPtr == nullptr)
+            return;
+
+        // Случай, когда была найден папка
+        if (DirPtr->name == input && DirPtr->type == 'd')
+        {
+            CurDir = DirPtr;
+            fullPath = fullPath + "\\" + DirPtr->name;
+
+            // Случай, когда выбранная папка пуста
+            if (CurDir->getChild() == nullptr)
+            {
+                writeInFolder = true;
+                Cur = CurDir;
+            }
+
+            // Нахождение конца списка в выбранной папке
+            else
+            {
+                Cur = CurDir->getChild();
+                while (Cur->nextPtr != nullptr)
+                {
+                    Cur = Cur->nextPtr;
+                }
+            }
+        }
+    }
+}
+
+DirElem* DirElem::getChild()
+{
+    if (this != nullptr)
+    {
+        if (this->type == 'd')
+        {
+            Folder* Buff = static_cast<Folder*>(this);
+            return Buff->innerElemPtr;
+        }
+        else
+            return nullptr;  
+    }
+    else
+        return nullptr;
 }
 
 DirElem::DirElem()
@@ -189,11 +289,6 @@ File::File()
 {
     this->type = 'f'; // f - file, элемент является файлом
     this->size = 0;
-}
-
-DirElem::~DirElem()
-{
-    // delete this;
 }
 
 Folder::~Folder()

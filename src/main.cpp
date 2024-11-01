@@ -28,23 +28,18 @@ int main()
 
     MainSys.ls();
 
-    MainSys.writeInFolder = true;
-    MainSys.CurDir = Folder1;
+    MainSys.cd("folder1");
 
     MainSys.touch(File3);
     MainSys.mkdir(Folder2);
 
-    MainSys.writeInFolder = true;
-    MainSys.CurDir = Folder2;
+    MainSys.cd("folder2");
 
-    MainSys.touch(File4); // какого-то черта указатель nextPtr указывает обратно в папку
+    MainSys.touch(File4);
 
     MainSys.ls();
-
-    MainSys.rmdir(Folder1);
-    // MainSys.rm(File2);
-    // MainSys.rm(File3);
-    // MainSys.rm(File1);
+    MainSys.cd("..");
+    MainSys.cd("..");
     
     return 0;
 }

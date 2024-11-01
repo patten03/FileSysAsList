@@ -15,8 +15,9 @@ class DirElem
         DirElem *prevPtr;
         DirElem *nextPtr;
 
+        DirElem* getChild();
+
         DirElem();
-        virtual ~DirElem();
 };
 
 class Folder: public DirElem
@@ -34,15 +35,15 @@ class File: public DirElem
         unsigned int size;
 
         File();
-        // ~File();
 };
 
 class FileSys
 {
     public:
-        DirElem *Beg;    // Общее начало списка
-        DirElem *Cur;    // Текущий элемент директории, с которого начинается запись
-        DirElem *CurDir; // Текущая папка, для вывода через ls()
+        DirElem *Beg;         // Общее начало списка
+        DirElem *Cur;         // Текущий элемент директории, с которого начинается запись
+        DirElem *CurDir;      // Текущая папка, для вывода через ls()
+        std::string fullPath; // Полный путь к выбранной папке
 
         // Отвечает за запись в последующие папки в директории
         bool writeInFolder;
@@ -55,10 +56,10 @@ class FileSys
         void rmdir(Folder*& ExFolder);      // удалить папку
 
         void addElem(DirElem* NewElem);     // подфункция для touch() и mkdir() 
-        void delElem(DirElem*& ExElem);      // подфункция для rm() и rmdir
+        void delElem(DirElem*& ExElem);     // подфункция для rm() и rmdir
 
-        void ls();           // вернуть содержимое текущей директории
-        // DirElem& cd();    // изменить текущую директорию 
+        void ls();                   // вернуть содержимое текущей директории
+        void cd(std::string folder); // изменить текущую директорию 
 
         FileSys();
 };
