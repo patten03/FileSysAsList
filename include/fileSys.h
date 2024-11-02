@@ -50,13 +50,13 @@ class FileSys
 
         // Приведенные ниже методы схожи с команадами bash
 
-        void touch(File* NewFile);          // создать файл
-        void rm(File*& ExFile);             // удалить файл
-        void mkdir(Folder* NewFolder);      // создать папку
-        void rmdir(Folder*& ExFolder);      // удалить папку
+        void touch(File* NewFile);         // создать файл
+        void rm(File* ExFile);             // удалить файл
+        void mkdir(Folder* NewFolder);     // создать папку
+        void rmdir(Folder* ExFolder);      // удалить папку
 
-        void addElem(DirElem* NewElem);     // подфункция для touch() и mkdir() 
-        void delElem(DirElem*& ExElem);     // подфункция для rm() и rmdir
+        void addElem(DirElem* NewElem);    // подфункция для touch() и mkdir() 
+        void delElem(DirElem* ExElem);     // подфункция для rm() и rmdir
 
         void ls();                   // вернуть содержимое текущей директории
         void cd(std::string folder); // изменить текущую директорию 

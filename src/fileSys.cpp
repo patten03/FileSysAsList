@@ -69,85 +69,58 @@ void FileSys::addElem(DirElem* NewElem)
     }
 }
 
-void FileSys::rm(File*& ExFile)
+void FileSys::rm(File* ExFile)
 {
-    // Случай, когда файл является единственным в списке
-    if (ExFile->prevPtr == nullptr && ExFile->nextPtr == nullptr)
-    {
-        Beg = nullptr;
-        delete ExFile;
-        ExFile = nullptr;
-        
-        return;
-    }
-    // Случай, когда файл является началом списка
-    if (ExFile->prevPtr == nullptr)
-    {
-        Beg = ExFile->nextPtr;
-        (ExFile->nextPtr)->prevPtr = nullptr;
-
-        delete ExFile;
-        ExFile = nullptr;
-        
-        return;
-    }
-    // Случай, когда файл является концом списка
-    if (ExFile->nextPtr == nullptr)
-    {
-        ExFile->prevPtr->nextPtr = nullptr;        
-
-        delete ExFile;
-        ExFile = nullptr;
-    }
-    // Общий случай
-    else
-    {
-        ExFile->prevPtr->nextPtr = ExFile->nextPtr;
-        ExFile->nextPtr->prevPtr = ExFile->prevPtr;
-
-        delete ExFile;
-        ExFile = nullptr;
-    }
+    delElem(ExFile);
 }
 
-void FileSys::rmdir(Folder*& ExFolder)
+void FileSys::rmdir(Folder* ExFolder)
+{
+    delElem(ExFolder);
+}
+
+void FileSys::delElem(DirElem* ExElem)
 {
     // Случай, когда файл является единственным в списке
-    if (ExFolder->prevPtr == nullptr && ExFolder->nextPtr == nullptr)
+    if (ExElem->prevPtr == nullptr && ExElem->nextPtr == nullptr)
     {
         Beg = nullptr;
-        delete ExFolder;
-        ExFolder = nullptr;
+        delete ExElem;
+        ExElem = nullptr;
         
+        // тут что-то дописать по прохождение по выходу из папки и переходу в конец последнего элемента
+
         return;
     }
     // Случай, когда файл является началом списка
-    if (ExFolder->prevPtr == nullptr)
+    if (ExElem->prevPtr == nullptr)
     {
-        Beg = ExFolder->nextPtr;
-        (ExFolder->nextPtr)->prevPtr = nullptr;
+        Beg = ExElem->nextPtr;
+        (ExElem->nextPtr)->prevPtr = nullptr;
 
-        delete ExFolder;
-        ExFolder = nullptr;
+        delete ExElem;
+        ExElem = nullptr;
         
         return;
     }
     // Случай, когда файл является концом списка
-    if (ExFolder->nextPtr == nullptr)
+    if (ExElem->nextPtr == nullptr)
     {
-        ExFolder->prevPtr->nextPtr = nullptr;        
+        ExElem->prevPtr->nextPtr = nullptr;        
 
-        delete ExFolder;
-        ExFolder = nullptr;
+        Cur = ExElem->prevPtr;
+
+        delete ExElem;
+        ExElem = nullptr;
     }
     // Общий случай
     else
     {
-        ExFolder->prevPtr->nextPtr = ExFolder->nextPtr;
-        ExFolder->nextPtr->prevPtr = ExFolder->prevPtr;
+        ExElem->prevPtr->nextPtr = ExElem->nextPtr;
+        ExElem->nextPtr->prevPtr = ExElem->prevPtr;
 
-        delete ExFolder;
-        ExFolder = nullptr;
+        delete ExElem;
+        ExElem = nullptr;
     }
 }
 

@@ -41,5 +41,8 @@ int main()
     MainSys.cd("..");
     MainSys.cd("..");
     
+    MainSys.rm(File1);
+    MainSys.rmdir(Folder1);
+
     return 0;
 }
