@@ -29,6 +29,7 @@ target_include_directories(MenuWork
 add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/fileSys.cpp
+    ${PROJECT_SOURCE_DIR}/src/menu.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

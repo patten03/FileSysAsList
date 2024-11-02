@@ -87,8 +87,6 @@ void FileSys::delElem(DirElem* ExElem)
         Beg = nullptr;
         delete ExElem;
         ExElem = nullptr;
-        
-        // тут что-то дописать по прохождение по выходу из папки и переходу в конец последнего элемента
 
         return;
     }
@@ -103,6 +101,18 @@ void FileSys::delElem(DirElem* ExElem)
         
         return;
     }
+    // Случай, когда элемент является начальным внутри папки
+    if (ExElem->prevPtr->getChild() == ExElem)
+    {
+        Folder* temp = static_cast<Folder*>(ExElem->prevPtr);
+        temp->innerElemPtr = ExElem->nextPtr;
+        ExElem->nextPtr->prevPtr = temp;
+
+        delete ExElem;
+        ExElem = nullptr;
+
+        return;
+    }
     // Случай, когда файл является концом списка
     if (ExElem->nextPtr == nullptr)
     {
@@ -112,6 +122,8 @@ void FileSys::delElem(DirElem* ExElem)
 
         delete ExElem;
         ExElem = nullptr;
+
+        return;
     }
     // Общий случай
     else
@@ -121,6 +133,8 @@ void FileSys::delElem(DirElem* ExElem)
 
         delete ExElem;
         ExElem = nullptr;
+
+        return;
     }
 }
 
@@ -130,7 +144,6 @@ void FileSys::ls()
     DirElem* curElem;
     if(this->CurDir != nullptr)
         curElem = CurDir->getChild();
-        // curElem = static_cast<Folder*>(this->CurDir)->innerElemPtr;
     else
         curElem = this->Beg;
     
@@ -225,6 +238,34 @@ void FileSys::cd(std::string input)
             }
         }
     }
+}
+
+DirElem* FileSys::findElem(std::string name)
+{
+    DirElem* res = nullptr;
+
+    // Находимся ли мы на диске или в папке
+    DirElem* curElem;
+    if(this->CurDir != nullptr)
+        curElem = CurDir->getChild();
+    else
+        curElem = this->Beg;
+    
+    // Вывод сообщения в случае, если директория пуста
+    if(curElem == nullptr)
+        std::cout << "Текущая директория пуста" << std::endl;
+
+    // Прохождение по текущей директории и нахождение элемента
+    while(curElem != nullptr)
+    {
+        if (curElem->name == name)
+        {
+            res = curElem;
+            return res;
+        }
+        curElem = curElem->nextPtr;
+    }
+    return res;
 }
 
 DirElem* DirElem::getChild()
