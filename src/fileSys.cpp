@@ -268,6 +268,15 @@ DirElem* FileSys::findElem(std::string name, char type)
     return res;
 }
 
+bool FileSys::isExist(std::string name, char type)
+{
+    DirElem* buff = findElem(name, type);
+    if (buff == nullptr)
+        return false;
+    else
+        return true;
+}
+
 DirElem* DirElem::getChild()
 {
     if (this != nullptr)

@@ -32,9 +32,15 @@ void menu()
                 std::string file = askName(question);
                 if (file != "0")
                 {
-                    File* BuffFile = new File;
-                    BuffFile->name = file;
-                    MainSys.touch(BuffFile);                     
+                    // Проверка на уже существование файла со схожим названием
+                    if (!MainSys.isExist(file, 'f'))
+                    {
+                        File* BuffFile = new File;
+                        BuffFile->name = file;
+                        MainSys.touch(BuffFile);                          
+                    }
+                    else
+                        std::cout << "Невозможно создать файл со схожим названием" << std::endl << std::endl;
                 }
 
                 break;
@@ -45,9 +51,15 @@ void menu()
                 std::string folder = askName(question);
                 if (folder != "0")
                 {
-                    Folder* BuffFolder = new Folder;
-                    BuffFolder->name = folder;
-                    MainSys.mkdir(BuffFolder);                    
+                    // Проверка на уже существование папки со схожим названием
+                    if (!MainSys.isExist(folder, 'd'))
+                    {
+                        Folder* BuffFolder = new Folder;
+                        BuffFolder->name = folder;
+                        MainSys.mkdir(BuffFolder);                           
+                    }
+                    else
+                        std::cout << "Невозможно создать папку со схожим названием" << std::endl << std::endl;                    
                 }
 
                 break;

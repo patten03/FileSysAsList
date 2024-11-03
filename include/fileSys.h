@@ -62,6 +62,7 @@ class FileSys
         void cd(std::string folder); // изменить текущую директорию 
 
         DirElem* FileSys::findElem(std::string name, char type); // найти элемент с введенным название в текущей директории
+        bool isExist(std::string name, char type);               // проверка на существование элемента со схожим именем и названием
 
         FileSys();
 };
