@@ -240,7 +240,7 @@ void FileSys::cd(std::string input)
     }
 }
 
-DirElem* FileSys::findElem(std::string name)
+DirElem* FileSys::findElem(std::string name, char type)
 {
     DirElem* res = nullptr;
 
@@ -258,7 +258,7 @@ DirElem* FileSys::findElem(std::string name)
     // Прохождение по текущей директории и нахождение элемента
     while(curElem != nullptr)
     {
-        if (curElem->name == name)
+        if (curElem->name == name && curElem->type == type)
         {
             res = curElem;
             return res;

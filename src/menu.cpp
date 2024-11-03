@@ -58,7 +58,7 @@ void menu()
                 std::string file = askName(question);
                 if (file != "0")
                 {
-                    File* BuffFile = static_cast<File*>(MainSys.findElem(file));
+                    File* BuffFile = static_cast<File*>(MainSys.findElem(file, 'f'));
 
                     if (BuffFile != nullptr)
                         MainSys.rm(BuffFile);
@@ -74,7 +74,7 @@ void menu()
                 std::string folder = askName(question);
                 if (folder != "0")
                 {
-                    Folder* BuffFolder = static_cast<Folder*>(MainSys.findElem(folder));
+                    Folder* BuffFolder = static_cast<Folder*>(MainSys.findElem(folder, 'd'));
 
                     if (BuffFolder != nullptr)
                         MainSys.rmdir(BuffFolder);
