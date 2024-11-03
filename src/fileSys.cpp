@@ -11,6 +11,21 @@ FileSys::FileSys()
     this->writeInFolder = false;
 }
 
+FileSys::~FileSys()
+{
+    DirElem* curElem = Beg;
+    if (Beg != nullptr)
+    {
+        while (curElem->nextPtr != nullptr)
+        {
+            DirElem* buff = curElem;
+            curElem = curElem->nextPtr;
+            delete buff;
+        }
+        delete curElem;            
+    }
+}
+
 void FileSys::touch(File* NewFile)
 {
     addElem(NewFile);

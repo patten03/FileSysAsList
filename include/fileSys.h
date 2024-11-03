@@ -65,6 +65,7 @@ class FileSys
         bool isExist(std::string name, char type);               // проверка на существование элемента со схожим именем и названием
 
         FileSys();
+        ~FileSys();
 };
 
 #endif // FILESYS_M
