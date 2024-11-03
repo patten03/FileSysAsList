@@ -13,13 +13,17 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/windows-1251>")
 # Создание библиотеки
 #####################
 
-add_library(MenuWork STATIC
+add_library(MenuWork SHARED
     ${PROJECT_SOURCE_DIR}/lib/MenuWork/MenuWork.cpp
 )
 
 target_include_directories(MenuWork
     PUBLIC
         ${PROJECT_SOURCE_DIR}/lib/MenuWork
+)
+
+set_target_properties(MenuWork PROPERTIES
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 
 ##########################
