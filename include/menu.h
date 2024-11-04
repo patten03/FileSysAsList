@@ -5,5 +5,6 @@
 #include <MenuWork.h>
 
 void menu();
+bool receiveFSAL(const std::string& filename);
 
 #endif // PROG_MENU

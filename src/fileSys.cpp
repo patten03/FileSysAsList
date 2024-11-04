@@ -201,10 +201,22 @@ void FileSys::cd(std::string input)
             }
             CurDir = CurDir->prevPtr;
 
-            Cur = CurDir;
+
             // Перемещение указателя Cur в конец списка
-            while (Cur->nextPtr != nullptr)
-                Cur = Cur->nextPtr;
+            // Проверка на то, является ли текущая папка пустой
+            if (CurDir->getChild() != nullptr)
+            {
+                Cur = CurDir->getChild();
+                while (Cur->nextPtr != nullptr)
+                    Cur = Cur->nextPtr;                
+            }
+            // Случай, когда папка является пустой
+            else
+            {
+                Cur = CurDir;
+                writeInFolder = true;
+            }
+            
         }
     }
 
@@ -220,7 +232,7 @@ void FileSys::cd(std::string input)
             DirPtr = CurDir->getChild();
 
         // Поиск введенной папки в текущей директории
-        while (DirPtr != nullptr && (DirPtr->name != input && DirPtr->type != 'd'))
+        while (DirPtr != nullptr && (DirPtr->name != input || DirPtr->type != 'd'))
         {
             DirPtr = DirPtr->nextPtr;
         }
@@ -229,7 +241,7 @@ void FileSys::cd(std::string input)
         if (DirPtr == nullptr)
             return;
 
-        // Случай, когда была найден папка
+        // Случай, когда была найдена папка
         if (DirPtr->name == input && DirPtr->type == 'd')
         {
             CurDir = DirPtr;
@@ -265,10 +277,6 @@ DirElem* FileSys::findElem(std::string name, char type)
         curElem = CurDir->getChild();
     else
         curElem = this->Beg;
-    
-    // Вывод сообщения в случае, если директория пуста
-    if(curElem == nullptr)
-        std::cout << "Текущая директория пуста" << std::endl;
 
     // Прохождение по текущей директории и нахождение элемента
     while(curElem != nullptr)
@@ -290,6 +298,63 @@ bool FileSys::isExist(std::string name, char type)
         return false;
     else
         return true;
+}
+
+void FileSys::loadFileSys(std::string filename)
+{  
+    std::fstream in;
+    in.open(filename, std::ios_base::in);
+
+    unsigned int prevLevel = 0, curLevel = 0; // уровни вложенности папок в файловой системе
+    while (!in.eof())
+    {
+        std::string line;
+        std::getline(in, line);
+
+        // Проверка на то, есть ли в конце файла пустая строка
+        if (line.empty())
+            break;
+
+        // Нахождение уровня текущего элемента файловой системы
+        curLevel = 0;
+        for(char c: line)
+            if (c == '\t')
+                curLevel++;
+
+        // Очистка строки от отступов
+        line.erase(0, curLevel);
+
+        // Получения данных об элементе
+        char type = line[0];
+        std::string name = line.substr(2, line.size() - 1);
+
+        // Случай, когда в папке находятся элементы
+        if (curLevel > prevLevel)
+            this->cd(this->Cur->name); // переход в последнюю добавленную папку
+        // Случай, когда элементов в текущей папке нет и элемент находится с папкой в одной общей папке
+        if (curLevel < prevLevel)
+            this->cd("..");
+        
+        // Добавление элемента в структуру
+        if (type == 'd')
+        {
+            Folder* Buff = new Folder;
+            Buff->name = name;
+            Buff->type = type;
+            this->addElem(Buff);
+        }
+        else
+        {
+            File* Buff = new File;
+            Buff->name = name;
+            Buff->type = type;
+            this->addElem(Buff);
+        }
+
+        prevLevel = curLevel;
+    }
+
+    in.close();
 }
 
 DirElem* DirElem::getChild()

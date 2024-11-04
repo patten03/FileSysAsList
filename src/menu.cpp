@@ -19,6 +19,7 @@ void menu()
             "Удалить папку",
             "Изменить директорию",
             "Вывести все элементы текущей папки",
+            "Загрузить сохраненую структуру",
             "Выйти из программы"
         };
         ask(menuPanel);
@@ -116,7 +117,35 @@ void menu()
 
                 break;
             }
-            case 7: // Выход из программы
+            case 7: // Загрузка сохраненной структуры
+            {
+                // Проверка на то, является ли текущая структура пустой
+                if (MainSys.Beg != nullptr)
+                {
+                    std::cout << "Вы уверены, что хотите загрузить структуру, не сохранив текущую?" << std::endl;
+                    std::vector<std::string> question = {
+                        "Да",
+                        "Нет"
+                    };
+                    ask(question);
+                    int ans = inputChoice(question.size());
+
+                    if (ans == 2)
+                        break;
+                }
+                
+                // Выбор файловой системы
+                std::string filename = findFile("Выберите файл, содержащий структуру файловой системы:", receiveFSAL);
+                if (filename != "0")
+                {
+                    MainSys.~FileSys();
+                    MainSys = FileSys();
+                    MainSys.loadFileSys(filename);                   
+                }
+
+                break;
+            }
+            case 8: // Выход из программы
             {
                 quit = true;
             }
@@ -124,3 +153,14 @@ void menu()
     }
 }
 
+bool receiveFSAL(const std::string& filename)
+{
+	int dotPos = filename.rfind(".fsal");
+	if (dotPos != std::string::npos)
+	{
+		std::string extension = filename.substr(dotPos, filename.size() - 1);
+		return (extension == ".fsal");
+	}
+	else
+		return false; // если в названии файла с расширением точки нет
+}
