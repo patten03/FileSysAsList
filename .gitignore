@@ -48,3 +48,5 @@ CMakeUserPresets.json
 build
 *.bat
 .vscode
+*.fsal
+!пример_файловой_системы.fsal

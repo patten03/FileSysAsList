@@ -357,6 +357,30 @@ void FileSys::loadFileSys(std::string filename)
     in.close();
 }
 
+void FileSys::uploadFileSys(std::string filename)
+{
+    std::fstream out;
+    out.open(filename, std::ios_base::out);
+
+    writeElem(out, Beg, 0);
+
+    out.close();
+}
+
+void FileSys::writeElem(std::fstream& stream, DirElem* Elem, unsigned int level)
+{
+    // Ввод элемента в файл
+    stream << std::string(level, '\t') << Elem->type << ' ' << Elem->name << std::endl;
+
+    // Ввод элементов из папки с отступом
+    if (Elem->getChild() != nullptr)
+        writeElem(stream, Elem->getChild(), level + 1);
+
+    // Продолжение ввода элементов, если таковые есть
+    if (Elem->nextPtr != nullptr)
+        writeElem(stream, Elem->nextPtr, level);
+}
+
 DirElem* DirElem::getChild()
 {
     if (this != nullptr)

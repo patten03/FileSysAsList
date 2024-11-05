@@ -210,7 +210,7 @@ void checkSpecialSymbols(const std::string& word) {
 	std::string forbiddenSymbols("\\/:*?<>\"|");
 	for (int i(0); i < forbiddenSymbols.size(); i++) {
 		if (word.find(forbiddenSymbols[i]) != -1)
-			throw std::invalid_argument("Название файла не может содержать \\/:*?<>\"|");
+			throw std::invalid_argument("Название файла/папки не может содержать \\/:*?<>\"|");
 	}
 }
 

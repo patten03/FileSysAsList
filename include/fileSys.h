@@ -66,6 +66,8 @@ class FileSys
         bool isExist(std::string name, char type);               // проверка на существование элемента со схожим именем и названием
 
         void loadFileSys(std::string filename);
+        void uploadFileSys(std::string filename);
+        void writeElem(std::fstream& stream, DirElem* Elem, unsigned int level);
 
         FileSys();
         ~FileSys();

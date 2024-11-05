@@ -20,6 +20,7 @@ void menu()
             "Изменить директорию",
             "Вывести все элементы текущей папки",
             "Загрузить сохраненую структуру",
+            "Сохранить созданную структуру",
             "Выйти из программы"
         };
         ask(menuPanel);
@@ -145,10 +146,31 @@ void menu()
 
                 break;
             }
-            case 8: // Выход из программы
+            case 8: // Сохранение файловой системы
+            {
+                // Проверка на существование структры
+                if (MainSys.Beg != nullptr)
+                {
+                    std::string filename = askName("Введите желаемое название для сохраняемого файла со структурой:");
+                    if (filename != "0")
+                    {
+                        filename = space2underscore(filename) + "_" + currentTime() + ".fsal";
+                        MainSys.uploadFileSys(filename);
+                        std::cout << "Структура была сохранена под названием " << filename << std::endl << std::endl;;
+                    }
+                }
+
+                else
+                    std::cout << "Невозможно сохранить пустую структуру" << std::endl << std::endl;
+
+                break;
+            }
+            case 9: // Выход из программы
             {
                 quit = true;
+                break;
             }
+            default: break;
         }
     }
 }
