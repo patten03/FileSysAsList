@@ -6,13 +6,16 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <regex>
+#include <iomanip>
+#include <sstream>
 
 class DirElem
 {
     public:
         char type;
         std::string name;
-        std::time_t date;
+        std::string date;
         DirElem *prevPtr;
         DirElem *nextPtr;
 
@@ -72,5 +75,9 @@ class FileSys
         FileSys();
         ~FileSys();
 };
+
+std::string inputName();
+int inputSize();
+std::string inputDate();
 
 #endif // FILESYS_M

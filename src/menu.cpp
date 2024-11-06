@@ -30,40 +30,64 @@ void menu()
         {
             case 1: // Создание файла
             {
-                std::string question = "Введите название создаваемого файла, для выхода введите <0>";
-                std::string file = askName(question);
-                if (file != "0")
-                {
-                    // Проверка на уже существование файла со схожим названием
-                    if (!MainSys.isExist(file, 'f'))
-                    {
-                        File* BuffFile = new File;
-                        BuffFile->name = file;
-                        MainSys.touch(BuffFile);                          
-                    }
-                    else
-                        std::cout << "Невозможно создать файл со схожим названием" << std::endl << std::endl;
-                }
+                std::string file;
+                int size;
+                std::string date;
 
+                file = inputName();
+                // Выход по желанию пользователя
+                if (file == "0")
+                    {system("cls"); break;}
+                // Проверка на уже существование файла со схожим названием
+                if (MainSys.isExist(file, 'f'))
+                {
+                    std::cout << "Невозможно создать файл со схожим названием" << std::endl << std::endl;
+                    break;
+                }
+                size = inputSize();
+                // Выход по желанию пользователя
+                if (size == -1)
+                    {system("cls"); break;}
+                date = inputDate();
+                // Выход по желанию пользователя
+                if (date == "0")
+                    {system("cls"); break;}
+                
+                File* BuffFile = new File;
+                BuffFile->name = file;
+                BuffFile->date = date;
+                BuffFile->size = size;
+                MainSys.touch(BuffFile);   
+
+                system("cls");
                 break;
             }
             case 2: // Создание папки
             {
-                std::string question = "Введите название создаваемой папки, для выхода введите <0>";
-                std::string folder = askName(question);
-                if (folder != "0")
-                {
-                    // Проверка на уже существование папки со схожим названием
-                    if (!MainSys.isExist(folder, 'd'))
-                    {
-                        Folder* BuffFolder = new Folder;
-                        BuffFolder->name = folder;
-                        MainSys.mkdir(BuffFolder);                           
-                    }
-                    else
-                        std::cout << "Невозможно создать папку со схожим названием" << std::endl << std::endl;                    
-                }
+                std::string folder;
+                std::string date;
 
+                folder = inputName();
+                // Выход по желанию пользователя
+                if (folder == "0")
+                    {system("cls"); break;}
+                // Проверка на уже существование файла со схожим названием
+                if (MainSys.isExist(folder, 'd'))
+                {
+                    std::cout << "Невозможно создать папку со схожим названием" << std::endl << std::endl;
+                    break;
+                }
+                date = inputDate();
+                // Выход по желанию пользователя
+                if (date == "0")
+                    {system("cls"); break;}
+                
+                Folder* BuffFolder = new Folder;
+                BuffFolder->name = folder;
+                BuffFolder->date = date;
+                MainSys.mkdir(BuffFolder);   
+
+                system("cls");
                 break;
             }
             case 3: // Удаление файла

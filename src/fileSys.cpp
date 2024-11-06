@@ -165,11 +165,30 @@ void FileSys::ls()
     // Вывод сообщения в случае, если директория пуста
     if(curElem == nullptr)
         std::cout << "Текущая директория пуста" << std::endl;
-
+    else
+        std::cout
+            << std::setw(12) << std::left << "Тип"
+            << std::setw(28) << std::left << "Дата создания"
+            << std::setw(22) << std::right << "Размер в kb" << "  "
+            << std::left << "Название" << std::endl;
     // Прохождение по текущей директории и вывод информации
     while(curElem != nullptr)
     {
-        std::cout << curElem->type << ' ' <<  curElem->name << std::endl;
+        // Вывод папки в консоль
+        if (curElem->type == 'd')
+            std::cout
+                << std::setw(12) << std::left << "папка"
+                << std::setw(28) << std::left <<  curElem->date
+                << std::setw(22) << std::right << "" << "  "
+                << std::left << curElem->name << std::endl;
+        // Вывод файла в консоль
+        if (curElem->type == 'f')
+            std::cout
+                << std::setw(12) << std::left << "файл"
+                << std::setw(28) << std::left <<  curElem->date
+                << std::setw(22) << std::right << static_cast<File*>(curElem)->size << "  "
+                << std::left << curElem->name << std::endl;
+
         curElem = curElem->nextPtr;
     }
 }
@@ -325,8 +344,25 @@ void FileSys::loadFileSys(std::string filename)
         line.erase(0, curLevel);
 
         // Получения данных об элементе
-        char type = line[0];
-        std::string name = line.substr(2, line.size() - 1);
+        std::stringstream ss(line);
+        std::string buff;
+
+        char type;
+        std::string name;
+        std::string date;
+        int size;
+
+        std::getline(ss, buff, ';');
+        type = buff[0];
+        std::getline(ss, buff, ';');
+        name = buff;
+        std::getline(ss, buff, ';');
+        date = buff;
+        if (type == 'f')
+        {
+            std::getline(ss, buff, ';');
+            size = std::stoi(buff);
+        }
 
         // Случай, когда в папке находятся элементы
         if (curLevel > prevLevel)
@@ -341,6 +377,7 @@ void FileSys::loadFileSys(std::string filename)
             Folder* Buff = new Folder;
             Buff->name = name;
             Buff->type = type;
+            Buff->date = date;
             this->addElem(Buff);
         }
         else
@@ -348,6 +385,8 @@ void FileSys::loadFileSys(std::string filename)
             File* Buff = new File;
             Buff->name = name;
             Buff->type = type;
+            Buff->date = date;
+            Buff->size = size;
             this->addElem(Buff);
         }
 
@@ -370,7 +409,23 @@ void FileSys::uploadFileSys(std::string filename)
 void FileSys::writeElem(std::fstream& stream, DirElem* Elem, unsigned int level)
 {
     // Ввод элемента в файл
-    stream << std::string(level, '\t') << Elem->type << ' ' << Elem->name << std::endl;
+
+    if (Elem->type == 'f')
+        stream
+            << std::string(level, '\t')
+            << Elem->type << ';'
+            << Elem->name << ';'
+            << Elem->date << ';'
+            << static_cast<File*>(Elem)->size
+            << std::endl;
+
+    if (Elem->type == 'd')
+        stream
+            << std::string(level, '\t')
+            << Elem->type << ';'
+            << Elem->name << ';'
+            << Elem->date
+            << std::endl;
 
     // Ввод элементов из папки с отступом
     if (Elem->getChild() != nullptr)
@@ -403,7 +458,7 @@ DirElem::DirElem()
     this->prevPtr = nullptr;
     this->nextPtr = nullptr;
     this->name = "";
-    this->date = 0;
+    this->date = "";
 }
 
 Folder::Folder()
@@ -432,4 +487,123 @@ Folder::~Folder()
             curPtr = buff;
         }
     }
+}
+
+std::string inputName()
+{
+    std::string res = "";
+
+    std::regex check{R"([^\\\/:*?<>"'|]+)", std::regex::collate};
+    std::cout << "Введите название файла/папки, для выхода введите <0>" << std::endl;
+
+    bool approved(false);
+    while (!approved)
+    {
+        std::cout << ">>";
+        std::getline(std::cin, res);
+
+        std::smatch sm;
+        if (std::regex_match(res, sm, check))
+            approved = true;
+        else
+            std::cout << "Название файла/папки не может содержать символы ^\\/:*?<>\"\'| и не может быть пустым" << std::endl;
+    }
+
+    return res;
+}
+
+int inputSize()
+{
+    std::string res = "";
+
+    std::regex check{R"(([0-9]+)|(-))", std::regex::collate};
+    std::cout << "Введите размер файла в килобайтах, для выхода введите <->" << std::endl;
+
+    bool approved(false);
+    while (!approved)
+    {
+        std::cout << ">>";
+        std::getline(std::cin, res);
+
+        std::smatch sm;
+        if (std::regex_match(res, sm, check))
+            approved = true;
+        else
+            std::cout << "Число не может содержать символы кроме 0-9" << std::endl;
+    }
+
+    if (res == "-")
+        return -1;
+    else
+        return std::stoi(res);
+}
+
+std::string inputDate()
+{
+    std::string time = "";
+    std::string date = "";
+
+    // Regex для ограничения временного формата от 00:00 до 23:59
+    std::regex check{R"(([01][0-9]|2[0-3]):([0-5][0-9])|(0))", std::regex::collate};
+
+    std::cout << "Введите время создания в формате hh:mm, для выхода введите <0>" << std::endl;
+    bool approved(false);
+    while (!approved)
+    {
+        std::cout << ">>";
+        std::getline(std::cin, time);
+
+        std::smatch sm;
+        if (std::regex_match(time, sm, check))
+            approved = true;
+        else
+            std::cout << "Неверный временной формат" << std::endl;
+    }
+
+    // Выход из ввода по желанию пользователя
+    if (time == "0")
+        return "0";
+
+    // Regex для ограничения временного формата от 01.01.1970 до 31.12.2999
+    check = std::regex{R"(((0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19[7-9][0-9]|2[0-9]{3}))|0)", std::regex::collate};
+
+    std::cout << "Введите дату создания в формате DD.MM.YYYY, дата создания не должна быть ранее 1970 года, для выхода введите <0>" << std::endl;
+    approved = false;
+    while (!approved)
+    {
+        std::cout << ">>";
+        std::getline(std::cin, date);
+
+        // Выход из ввода по желанию пользователя
+        if (date == "0")
+            return "0";
+
+        std::smatch sm;
+        if (std::regex_match(date, sm, check))
+        {
+            int day = std::stoi(date.substr(0,2));
+            int month = std::stoi(date.substr(3,2));
+
+            // Проверка месяцев, которые содержат менее 31 дня 
+            if (month == 2 || month == 4 || month == 6 || month == 9 || month == 11)
+            {
+                if (day > 30)
+                    std::cout << "Введенной даты не существует" << std::endl;
+                else
+                {
+                    // Проверка для февраля
+                    if (month == 2 && day > 28)
+                        std::cout << "Введенной даты не существует" << std::endl;
+                    else
+                        approved = true;
+                }
+            }
+            else
+                approved = true;
+        }
+        else
+            std::cout << "Неверный временной формат" << std::endl;
+    }
+    
+    return time + " " + date;
 }
