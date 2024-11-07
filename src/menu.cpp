@@ -124,6 +124,10 @@ void menu()
             }
             case 5: // Изменение директории
             {
+                std::cout << "Список элементов в текущей директории:" << std::endl;
+                MainSys.ls();
+                std::cout << std::endl;
+
                 std::cout << MainSys.fullPath << std::endl;
                 std::string question = "Введите название папки, в которую хотите войти,\nдля выхода из текущей папки введите <..>,\nдля выхода введите <0>";
                 std::string folder = askName(question);
@@ -136,9 +140,7 @@ void menu()
             {
                 std::cout << "Список элементов в текущей директории:" << std::endl;
                 MainSys.ls();
-                std::cout << "Для выхода в меню нажмите любую клавишу" << std::endl;
-                _getch();
-                system("cls");
+                std::cout << std::endl;
 
                 break;
             }
