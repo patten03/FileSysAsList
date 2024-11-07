@@ -91,6 +91,10 @@ void menu()
             }
             case 3: // Удаление файла
             {
+                std::cout << "Список элементов в текущей директории:" << std::endl;
+                MainSys.ls();
+                std::cout << std::endl;
+
                 std::string question = "Введите название удаляемого файла, для выхода введите <0>";
                 std::string file = askName(question);
                 if (file != "0")
@@ -107,6 +111,10 @@ void menu()
             }
             case 4: // Удаление папки
             {
+                std::cout << "Список элементов в текущей директории:" << std::endl;
+                MainSys.ls();
+                std::cout << std::endl;
+
                 std::string question = "Введите название удаляемой папки файла, для выхода введите <0>";
                 std::string folder = askName(question);
                 if (folder != "0")
