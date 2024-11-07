@@ -19,8 +19,7 @@ void menu()
             "Удалить папку",
             "Изменить директорию",
             "Вывести все элементы текущей папки",
-            "Загрузить сохраненую структуру",
-            "Сохранить созданную структуру",
+            "Загрузить/сохранить/создать структуру",
             "Выйти из программы"
         };
         ask(menuPanel);
@@ -144,59 +143,112 @@ void menu()
 
                 break;
             }
-            case 7: // Загрузка сохраненной структуры
+            case 7: // Загрузка/создание/сохранение структуры
             {
-                // Проверка на то, является ли текущая структура пустой
-                if (MainSys.Beg != nullptr)
-                {
-                    std::cout << "Вы уверены, что хотите загрузить структуру, не сохранив текущую?" << std::endl;
-                    std::vector<std::string> question = {
-                        "Да",
-                        "Нет"
-                    };
-                    ask(question);
-                    int ans = inputChoice(question.size());
-
-                    if (ans == 2)
-                        break;
-                }
-                
-                // Выбор файловой системы
-                std::string filename = findFile("Выберите файл, содержащий структуру файловой системы:", receiveFSAL);
-                if (filename != "0")
-                {
-                    MainSys.~FileSys();
-                    MainSys = FileSys();
-                    MainSys.loadFileSys(filename);                   
-                }
-
+                editStructureMenu(MainSys);
                 break;
             }
-            case 8: // Сохранение файловой системы
-            {
-                // Проверка на существование структры
-                if (MainSys.Beg != nullptr)
-                {
-                    std::string filename = askName("Введите желаемое название для сохраняемого файла со структурой:");
-                    if (filename != "0")
-                    {
-                        filename = space2underscore(filename) + "_" + currentTime() + ".fsal";
-                        MainSys.uploadFileSys(filename);
-                        std::cout << "Структура была сохранена под названием " << filename << std::endl << std::endl;;
-                    }
-                }
-
-                else
-                    std::cout << "Невозможно сохранить пустую структуру" << std::endl << std::endl;
-
-                break;
-            }
-            case 9: // Выход из программы
+            case 8: // Выход из программы
             {
                 quit = true;
                 break;
             }
             default: break;
+        }
+    }
+}
+
+void editStructureMenu(FileSys& MainSys)
+{
+    bool quit(false); // переменная выхода из программы
+	while (!quit)
+    {
+        std::cout << "Выберите действие:" << std::endl;
+        std::vector<std::string> menuPanel{
+            "Загрузить сохраненую структуру",
+            "Сохранить созданную структуру",
+            "Создать новую структуру",
+            "Выйти в меню"
+        };
+        ask(menuPanel);
+        int choice = inputChoice(menuPanel.size());
+
+        switch (choice)
+        {
+        case 1: // Загрузка структуру
+        {
+            // Проверка на то, является ли текущая структура пустой
+            if (MainSys.Beg != nullptr)
+            {
+                std::cout << "Вы уверены, что хотите загрузить структуру, не сохранив текущую?" << std::endl;
+                std::vector<std::string> question = {
+                    "Да",
+                    "Нет"
+                };
+                ask(question);
+                int ans = inputChoice(question.size());
+
+                if (ans == 2)
+                    break;
+            }
+            
+            // Выбор файловой системы
+            std::string filename = findFile("Выберите файл, содержащий структуру файловой системы:", receiveFSAL);
+            if (filename != "0")
+            {
+                MainSys.~FileSys();
+                MainSys = FileSys();
+                MainSys.loadFileSys(filename);                   
+            }
+
+            break;
+        }
+        case 2: // Сохранение структуры
+        {
+            // Проверка на существование структры
+            if (MainSys.Beg != nullptr)
+            {
+                std::string filename = askName("Введите желаемое название для сохраняемого файла со структурой, для выхода введите <0>:");
+                if (filename != "0")
+                {
+                    filename = space2underscore(filename) + "_" + currentTime() + ".fsal";
+                    MainSys.uploadFileSys(filename);
+                    std::cout << "Структура была сохранена под названием " << filename << std::endl << std::endl;;
+                }
+            }
+
+            else
+                std::cout << "Невозможно сохранить пустую структуру" << std::endl << std::endl;            
+
+            break;
+        }
+        case 3: // Создание новой структуры    
+        {
+            if (MainSys.Beg != nullptr)
+            {
+                std::cout << "Вы уверены, что хотите удалить текущую структру" << std::endl;
+                std::vector<std::string> question = {
+                    "Да",
+                    "Нет"
+                };
+                ask(question);
+                int ans = inputChoice(question.size());
+
+                if (ans == 2)
+                    break;
+            }            
+            MainSys.~FileSys();
+            MainSys = FileSys();
+
+            break;
+        }
+        case 4:
+        {
+            quit = true;
+            break;
+        }
+
+        default: break;
         }
     }
 }
