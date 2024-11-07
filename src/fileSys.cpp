@@ -493,7 +493,7 @@ std::string inputName()
 {
     std::string res = "";
 
-    std::regex check{R"([^\\\/:*?<>"'|]+)", std::regex::collate};
+    std::regex check{R"([^\\\/:*?<>"|]+)", std::regex::collate};
     std::cout << "Введите название файла/папки, для выхода введите <0>" << std::endl;
 
     bool approved(false);
@@ -506,7 +506,7 @@ std::string inputName()
         if (std::regex_match(res, sm, check))
             approved = true;
         else
-            std::cout << "Название файла/папки не может содержать символы ^\\/:*?<>\"\'| и не может быть пустым" << std::endl;
+            std::cout << "Название файла/папки не может содержать символы \\/:*?<>\"| и не может быть пустым" << std::endl;
     }
 
     return res;
@@ -567,7 +567,7 @@ std::string inputDate()
     // Regex для ограничения временного формата от 01.01.1970 до 31.12.2999
     check = std::regex{R"(((0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19[7-9][0-9]|2[0-9]{3}))|0)", std::regex::collate};
 
-    std::cout << "Введите дату создания в формате DD.MM.YYYY, дата создания не должна быть ранее 1970 года, для выхода введите <0>" << std::endl;
+    std::cout << "Введите дату создания в формате DD.MM.YYYY,\nдата создания не должна быть ранее 1970 года и не позже 2999 года,\nдля выхода введите <0>" << std::endl;
     approved = false;
     while (!approved)
     {
@@ -581,23 +581,17 @@ std::string inputDate()
         std::smatch sm;
         if (std::regex_match(date, sm, check))
         {
-            int day = std::stoi(date.substr(0,2));
-            int month = std::stoi(date.substr(3,2));
+            // Проверка на существование даты, без 29.02 в не високосный год и подобные ошибки
+            std::tm tm{};
+            tm.tm_mday = std::stoi(date.substr(0,2));
+            tm.tm_mon = std::stoi(date.substr(3,2)) - 1;
+            tm.tm_year = std::stoi(date.substr(6,4)) - 1900;
+            // Функция mktime() сдвигает дату, если она была некорректно введена на подобии 29.02.2003->01.03.2003
+            std::mktime(&tm);
 
-            // Проверка месяцев, которые содержат менее 31 дня 
-            if (month == 2 || month == 4 || month == 6 || month == 9 || month == 11)
-            {
-                if (day > 30)
-                    std::cout << "Введенной даты не существует" << std::endl;
-                else
-                {
-                    // Проверка для февраля
-                    if (month == 2 && day > 28)
-                        std::cout << "Введенной даты не существует" << std::endl;
-                    else
-                        approved = true;
-                }
-            }
+            // Проверка на существование даты
+            if (tm.tm_mday != std::stoi(date.substr(0, 2)))
+                std::cout << "Введенной даты не существует" << std::endl;
             else
                 approved = true;
         }
