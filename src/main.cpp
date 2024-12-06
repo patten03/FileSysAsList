@@ -4,7 +4,7 @@
 
 int main()
 {
-    standartSettings();
+    standartSettings(); // настройка языка программы
     menu();
 
     return 0;

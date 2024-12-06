@@ -8,6 +8,7 @@ void menu()
     std::cout << "Добро пожаловать в программу FileSysAsList" << std::endl;
 
     bool quit(false); // переменная выхода из программы
+    // Цикл выбора пунктов меню
 	while (!quit)
     {
         std::cout << "Текущая директория: " << MainSys.fullPath << std::endl;
@@ -22,13 +23,17 @@ void menu()
             "Загрузить/сохранить/создать структуру",
             "Выйти из программы"
         };
+
+        // Вывод и выбор пунктов меню
         ask(menuPanel);
         int choice = inputChoice(menuPanel.size());
-
+        
+        // Выполнение действий, выбранных пользователем
         switch (choice)
         {
             case 1: // Создание файла
             {
+                // Данные для создания файла
                 std::string file;
                 int size;
                 std::string date;
@@ -52,6 +57,7 @@ void menu()
                 if (date == "0")
                     {system("cls"); break;}
                 
+                // Создание файла
                 File* BuffFile = new File;
                 BuffFile->name = file;
                 BuffFile->date = date;
@@ -63,6 +69,7 @@ void menu()
             }
             case 2: // Создание папки
             {
+                // Данные для создания папки
                 std::string folder;
                 std::string date;
 
@@ -81,6 +88,7 @@ void menu()
                 if (date == "0")
                     {system("cls"); break;}
                 
+                // Создание папки
                 Folder* BuffFolder = new Folder;
                 BuffFolder->name = folder;
                 BuffFolder->date = date;
@@ -91,14 +99,18 @@ void menu()
             }
             case 3: // Удаление файла
             {
+                // Вывод элементов текущей директории для удобного ввода пользователем названия
                 std::cout << "Список элементов в текущей директории:" << std::endl;
                 MainSys.ls();
                 std::cout << std::endl;
-
+                
                 std::string question = "Введите название удаляемого файла, для выхода введите <0>";
                 std::string file = askName(question);
+
+                // Проверка на выход из меню
                 if (file != "0")
-                {
+                {   
+                    // Проверка на существования файла с введенным названием
                     File* BuffFile = static_cast<File*>(MainSys.findElem(file, 'f'));
 
                     if (BuffFile != nullptr)
@@ -111,14 +123,18 @@ void menu()
             }
             case 4: // Удаление папки
             {
+                // Вывод элементов текущей директории для удобного ввода пользователем названия
                 std::cout << "Список элементов в текущей директории:" << std::endl;
                 MainSys.ls();
                 std::cout << std::endl;
 
                 std::string question = "Введите название удаляемой папки файла, для выхода введите <0>";
                 std::string folder = askName(question);
+
+                // Проверка на выход из меню 
                 if (folder != "0")
                 {
+                    // Проверка на существование папки с введенным названием
                     Folder* BuffFolder = static_cast<Folder*>(MainSys.findElem(folder, 'd'));
 
                     if (BuffFolder != nullptr)
@@ -131,14 +147,20 @@ void menu()
             }
             case 5: // Изменение директории
             {
+                // Вывод элементов текущей директории для удобного ввода новой директории
                 std::cout << "Список элементов в текущей директории:" << std::endl;
                 MainSys.ls();
                 std::cout << std::endl;
 
+                // Вывод текущей директории
                 std::cout << MainSys.fullPath << std::endl;
                 std::string question = "Введите название папки, в которую хотите войти,\nдля выхода из текущей папки введите <..>,\nдля выхода введите <0>";
+                // Ввод названия директории
                 std::string folder = askName(question);
+
+                // Проверка на выход из меню
                 if (folder != "0")
+                    // Изменение директории
                     MainSys.cd(folder);
 
                 break;
@@ -169,6 +191,7 @@ void menu()
 void editStructureMenu(FileSys& MainSys)
 {
     bool quit(false); // переменная выхода из программы
+    // Цикл выбора пунктов подменю
 	while (!quit)
     {
         std::cout << "Выберите действие:" << std::endl;
@@ -178,6 +201,8 @@ void editStructureMenu(FileSys& MainSys)
             "Создать новую структуру",
             "Выйти в меню"
         };
+
+        // Вывод пунктов меню и выбор пользователем действия
         ask(menuPanel);
         int choice = inputChoice(menuPanel.size());
 
@@ -219,6 +244,8 @@ void editStructureMenu(FileSys& MainSys)
                 std::string filename = askName("Введите желаемое название для сохраняемого файла со структурой, для выхода введите <0>:");
                 if (filename != "0")
                 {
+                    // Преобразование названия файла, замена пробелов на <_> для совместимости с другими программи
+                    // и добавление текущего времени для предотвращения перезаписи файла
                     filename = space2underscore(filename) + "_" + currentTime() + ".fsal";
                     MainSys.uploadFileSys(filename);
                     std::cout << "Структура была сохранена под названием " << filename << std::endl << std::endl;;
@@ -261,6 +288,7 @@ void editStructureMenu(FileSys& MainSys)
     }
 }
 
+// Функция определения файлов с расширением .fsal
 bool receiveFSAL(const std::string& filename)
 {
 	int dotPos = filename.rfind(".fsal");

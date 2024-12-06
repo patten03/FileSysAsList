@@ -1,21 +1,26 @@
 #include "fileSys.h"
 
+// Конструктор файловой системы
 FileSys::FileSys()
 {
+    // Определение всех указателей для начальной работы
     this->Beg = nullptr;
     this->Cur = nullptr;
     this->CurDir = nullptr;
 
+    // Определение начала файловой системы
     this->fullPath = "C:";
 
     this->writeInFolder = false;
 }
 
+// Деструктор файловой системы
 FileSys::~FileSys()
 {
     DirElem* curElem = Beg;
     if (Beg != nullptr)
     {
+        // Цикл по удаление всех элементов файловой системы
         while (curElem->nextPtr != nullptr)
         {
             DirElem* buff = curElem;
@@ -26,16 +31,19 @@ FileSys::~FileSys()
     }
 }
 
+// Функция создания файла
 void FileSys::touch(File* NewFile)
 {
     addElem(NewFile);
 }
 
+// Функция создания папки
 void FileSys::mkdir(Folder* NewFolder)
 {
     addElem(NewFolder);
 }
 
+// Функция добавления элемента к файловой системе
 void FileSys::addElem(DirElem* NewElem)
 {
     // Случай, когда через cd() была сменена папка и туда требуется добавить элемент
@@ -84,16 +92,19 @@ void FileSys::addElem(DirElem* NewElem)
     }
 }
 
+// Функция удаления файла
 void FileSys::rm(File* ExFile)
 {
     delElem(ExFile);
 }
 
+// Функция удаления папки
 void FileSys::rmdir(Folder* ExFolder)
 {
     delElem(ExFolder);
 }
 
+// Функция удаления элемента из файловой системы
 void FileSys::delElem(DirElem* ExElem)
 {
     // Случай, когда файл является единственным в списке
@@ -153,6 +164,7 @@ void FileSys::delElem(DirElem* ExElem)
     }
 }
 
+// Функция вывода всех элементов файлов системы в текущей папке
 void FileSys::ls()
 {
     // Находимся ли мы на диске или в папке
@@ -165,6 +177,7 @@ void FileSys::ls()
     // Вывод сообщения в случае, если директория пуста
     if(curElem == nullptr)
         std::cout << "Текущая директория пуста" << std::endl;
+    // Вывод верхней строки таблицы
     else
         std::cout
             << std::setw(12) << std::left << "Тип"
@@ -193,6 +206,7 @@ void FileSys::ls()
     }
 }
 
+// Функция смены директории в файловой системе
 void FileSys::cd(std::string input)
 {
     // Выход из текущей папки
@@ -209,8 +223,10 @@ void FileSys::cd(std::string input)
             while (Cur->nextPtr != nullptr)
                 Cur = Cur->nextPtr;
         }
+        // Общий случай
         else
         {
+            // Получение названия текущей папки
             std::string outerFolder = fullPath.substr(fullPath.rfind('\\') + 1, fullPath.size() - fullPath.rfind('\\') - 1);
             
             // Перемещение указателя текущей папки во внешнюю папку
@@ -286,6 +302,7 @@ void FileSys::cd(std::string input)
     }
 }
 
+// Функция нахождения элемента в текущей директории
 DirElem* FileSys::findElem(std::string name, char type)
 {
     DirElem* res = nullptr;
@@ -310,6 +327,7 @@ DirElem* FileSys::findElem(std::string name, char type)
     return res;
 }
 
+// Функция проверки на существование элемента в текущей директории
 bool FileSys::isExist(std::string name, char type)
 {
     DirElem* buff = findElem(name, type);
@@ -319,6 +337,7 @@ bool FileSys::isExist(std::string name, char type)
         return true;
 }
 
+// Функция загрузки структуры из "реального" файла
 void FileSys::loadFileSys(std::string filename)
 {  
     std::fstream in;
@@ -396,20 +415,22 @@ void FileSys::loadFileSys(std::string filename)
     in.close();
 }
 
+// Функция сохранение структуры в "реальный" файл
 void FileSys::uploadFileSys(std::string filename)
 {
     std::fstream out;
     out.open(filename, std::ios_base::out);
 
+    // Рекурсивная запись элементов в файл
     writeElem(out, Beg, 0);
 
     out.close();
 }
 
+// Рекурсивная запись элементов в файл
 void FileSys::writeElem(std::fstream& stream, DirElem* Elem, unsigned int level)
 {
     // Ввод элемента в файл
-
     if (Elem->type == 'f')
         stream
             << std::string(level, '\t')
@@ -436,10 +457,13 @@ void FileSys::writeElem(std::fstream& stream, DirElem* Elem, unsigned int level)
         writeElem(stream, Elem->nextPtr, level);
 }
 
+// Функция получения указателя на содержимое папки
 DirElem* DirElem::getChild()
 {
+    // Проверка указателя на пустоту
     if (this != nullptr)
     {
+        // Проверка на тип элемента
         if (this->type == 'd')
         {
             Folder* Buff = static_cast<Folder*>(this);
@@ -452,9 +476,11 @@ DirElem* DirElem::getChild()
         return nullptr;
 }
 
+// Конструктор элемента
 DirElem::DirElem()
 {
-    this->type = 'n'; // n - None, элемент не является ни папкой, ни файлом
+    // Обнуление всех полей
+    this->type = 'n'; // n - none, элемент не является ни папкой, ни файлом
     this->prevPtr = nullptr;
     this->nextPtr = nullptr;
     this->name = "";
@@ -467,12 +493,14 @@ Folder::Folder()
     this->innerElemPtr = nullptr;
 }
 
+// Конструктор файла
 File::File()
 {
     this->type = 'f'; // f - file, элемент является файлом
-    this->size = 0;
+    this->size = 0;   // обнуление поля размера файла
 }
 
+// Деструктор папки с рекурсивным удалением содержимого папки
 Folder::~Folder()
 {
     {
@@ -489,10 +517,12 @@ Folder::~Folder()
     }
 }
 
+// Функция ввода названия элемента
 std::string inputName()
 {
     std::string res = "";
 
+    // Regex для вводимого названия, который содержит хотя бы один запрещенный символ 
     std::regex check{R"([^\\\/:*?<>"|]+)", std::regex::collate};
     std::cout << "Введите название файла/папки, для выхода введите <0>" << std::endl;
 
@@ -503,6 +533,7 @@ std::string inputName()
         std::getline(std::cin, res);
 
         std::smatch sm;
+        // Проверка на наличие запрещенных символов
         if (std::regex_match(res, sm, check))
             approved = true;
         else
@@ -512,10 +543,12 @@ std::string inputName()
     return res;
 }
 
+// Функция ввода размера файла в килобайтах
 int inputSize()
 {
     std::string res = "";
 
+    // Regex для вводимой строки, которая должна содержать только цифры или символ вывода
     std::regex check{R"(([0-9]+)|(-))", std::regex::collate};
     std::cout << "Введите размер файла в килобайтах, для выхода введите <->" << std::endl;
 
@@ -526,18 +559,21 @@ int inputSize()
         std::getline(std::cin, res);
 
         std::smatch sm;
+        // Проверка на корректность ввода
         if (std::regex_match(res, sm, check))
             approved = true;
         else
             std::cout << "Число не может содержать символы кроме 0-9" << std::endl;
     }
 
+    // Проверка на ввод символа выхода
     if (res == "-")
         return -1;
     else
         return std::stoi(res);
 }
 
+// Функция ввода даты и времени создания файла
 std::string inputDate()
 {
     std::string time = "";
@@ -546,6 +582,7 @@ std::string inputDate()
     // Regex для ограничения временного формата от 00:00 до 23:59
     std::regex check{R"(([01][0-9]|2[0-3]):([0-5][0-9])|(0))", std::regex::collate};
 
+    // Ввод времени создания
     std::cout << "Введите время создания в формате hh:mm, для выхода введите <0>" << std::endl;
     bool approved(false);
     while (!approved)
@@ -554,6 +591,7 @@ std::string inputDate()
         std::getline(std::cin, time);
 
         std::smatch sm;
+        // Проверка на корректность ввода времени
         if (std::regex_match(time, sm, check))
             approved = true;
         else
@@ -567,6 +605,7 @@ std::string inputDate()
     // Regex для ограничения временного формата от 01.01.0001 до 31.12.9999
     check = std::regex{R"(((0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]))|0)", std::regex::collate};
 
+    // Ввод даты создания
     std::cout << "Введите дату создания в формате DD.MM.YYYY,\nдата создания не должна быть ранее 1 года н.э. и не позже 9999 года,\nдля выхода введите <0>" << std::endl;
     approved = false;
     while (!approved)
@@ -579,6 +618,7 @@ std::string inputDate()
             return "0";
 
         std::smatch sm;
+        // Первичная проверка на корректность ввода
         if (std::regex_match(date, sm, check))
         {
             // Проверка на существование даты, без 29.02 в не високосный год и подобные ошибки

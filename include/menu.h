@@ -4,8 +4,13 @@
 #include "fileSys.h"
 #include <MenuWork.h>
 
-void menu();
+// Основоное меню программы
+void menu(); 
+
+// Подменю программы, отвечающее за сохранение и загрузку структуры
 void editStructureMenu(FileSys& MainSys);
+
+// Функция определения файлов с расширением .fsal
 bool receiveFSAL(const std::string& filename);
 
 #endif // PROG_MENU
