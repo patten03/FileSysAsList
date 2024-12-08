@@ -503,17 +503,15 @@ File::File()
 // Деструктор папки с рекурсивным удалением содержимого папки
 Folder::~Folder()
 {
+    DirElem* curPtr = this->innerElemPtr;
+
+    // цикл удаление всех элементов внутри папки
+    DirElem* buff;
+    while (curPtr != nullptr)
     {
-        DirElem* curPtr = this->innerElemPtr;
-        
-        // цикл удаление всех элементов внутри папки
-        DirElem* buff;
-        while (curPtr != nullptr)
-        {
-            buff = curPtr->nextPtr;
-            delete curPtr;
-            curPtr = buff;
-        }
+        buff = curPtr->nextPtr;
+        delete curPtr;
+        curPtr = buff;
     }
 }
 
