@@ -107,7 +107,7 @@ void FileSys::rmdir(Folder* ExFolder)
 // Функция удаления элемента из файловой системы
 void FileSys::delElem(DirElem* ExElem)
 {
-    // Случай, когда файл является единственным в списке
+    // Случай, когда элемент является единственным в списке
     if (ExElem->prevPtr == nullptr && ExElem->nextPtr == nullptr)
     {
         Beg = nullptr;
@@ -116,7 +116,7 @@ void FileSys::delElem(DirElem* ExElem)
 
         return;
     }
-    // Случай, когда файл является началом списка
+    // Случай, когда элемент является началом списка
     if (ExElem->prevPtr == nullptr)
     {
         Beg = ExElem->nextPtr;
@@ -139,7 +139,7 @@ void FileSys::delElem(DirElem* ExElem)
 
         return;
     }
-    // Случай, когда файл является концом списка
+    // Случай, когда элемент является концом списка
     if (ExElem->nextPtr == nullptr)
     {
         ExElem->prevPtr->nextPtr = nullptr;        
